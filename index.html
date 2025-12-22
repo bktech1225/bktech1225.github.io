@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<title>Robot UI - Giám sát & Điều khiển</title>
+
+<style>
+* { box-sizing: border-box; }
+
+body {
+    margin: 0;
+    font-family: Arial;
+    background: #0b1220;
+    color: #e5e7eb;
+}
+
+/* ===== HEADER ===== */
+header {
+    background: #020617;
+    padding: 12px 20px;
+    display: flex;
+    justify-content: space-between;
+    border-bottom: 1px solid #1e293b;
+}
+
+h2 { margin: 0; font-size: 18px; }
+
+/* ===== LAYOUT ===== */
+.main {
+    padding: 16px;
+    display: grid;
+    grid-template-columns: 2.2fr 1.2fr;
+    gap: 16px;
+}
+
+.card {
+    background: #020617;
+    border-radius: 12px;
+    padding: 14px;
+}
+
+.card h3 {
+    margin-top: 0;
+    font-size: 15px;
+    color: #93c5fd;
+}
+
+/* ===== CAMERA ===== */
+.left-card {
+    display: flex;
+    flex-direction: column;
+    height: calc(100vh - 140px); /* trừ header + padding */
+}
+
+/* camera */
+.camera-wrapper {
+    flex: 1;                    /* chỉ chiếm phần còn lại */
+    min-height: 220px;
+    max-height: 65vh;           /* KHÓA chiều cao */
+    background: black;
+    border-radius: 12px;
+    overflow: hidden;
+    border: 2px solid #1e293b;
+    margin-bottom: 12px;
+}
+
+/* ảnh/video */
+#camera {
+    width: 100%;
+    height: 100%;
+    object-fit: contain; /* giữ tỉ lệ */
+}
+
+.control-area {
+    display: grid;
+    grid-template-columns: 1.2fr 0.8fr 0.8fr;
+    gap: 12px;
+    margin-top: 10px;
+}
+
+.move-controls {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+}
+
+.forklift {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+	align-items: center;
+}
+
+.fork-title {
+    text-align: center;
+    font-size: 13px;
+    color: #facc15;
+}
+/* NÚT DI CHUYỂN - TO */
+.move-controls button {
+    padding: 26px;
+    font-size: 22px;
+    border-radius: 16px;
+}
+
+/* NÚT NÂNG / HẠ - NHỎ */
+.forklift button {
+	width: 160px;
+	height: 40px;
+    padding: 10px;
+    font-size: 14px;
+    border-radius: 10px;
+}
+.fork-columns {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+}
+
+/* ===== CONTROL ===== */
+.controls2 {
+    display: grid;
+    grid-template-columns: repeat(4,1fr);
+    gap: 8px;
+}
+
+button {
+    padding: 22px;
+    font-size: 18px;
+    font-weight: bold;
+    background: #1d4ed8;
+    border: none;
+    border-radius: 14px;
+    color: white;
+    cursor: pointer;
+    user-select: none;
+}
+
+button:hover {
+    opacity: 0.9;
+}
+
+button.stop { background: #dc2626; }
+button.support { background: #ca8a04; }
+button.fire { background: #dc2626; }
+button.cancel { background: #334155; }
+
+/* ===== BUILDING ===== */
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+td {
+    border: 1px solid #1e293b;
+    padding: 8px;
+    text-align: center;
+    cursor: pointer;
+    background: #020617;
+    transition: 0.2s;
+}
+
+td:hover { background: #020617; }
+
+.floor {
+    font-weight: bold;
+    color: #facc15;
+    cursor: default;
+}
+
+/* ===== ROOM STATE ===== */
+.room.support { background: #ca8a04; }
+.room.fire { background: #dc2626; }
+.room.selected { outline: 2px solid #38bdf8; }
+
+/* ===== RIGHT ===== */
+.right {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+#roomPanel {
+    display: none;
+}
+
+@keyframes fireBlink {
+    0%   { background: #7f1d1d; }
+    50%  { background: #dc2626; }
+    100% { background: #7f1d1d; }
+}
+
+.room.fire-blink {
+    animation: fireBlink 1s infinite;
+    color: white;
+}
+
+.right-controls {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    align-items: center;
+}
+
+.rescue-box {
+    margin-top: 10px;
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+}
+
+.rescue {
+    width: 180px;
+	height: 50px;
+    padding: 10px;
+    font-size: 14px;
+    border-radius: 10px;
+    border: none;
+    color: white;
+    cursor: pointer;
+}
+
+.rescue.open {
+    background: #2ecc71; /* xanh */
+}
+
+.rescue.close {
+    background: #e74c3c; /* đỏ */
+}
+
+.alert-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 8px;
+    font-size: 14px;
+}
+
+.indicators {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.dot {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: #374151;  /* tắt */
+    box-shadow: inset 0 0 6px black;
+}
+
+.dot.active.radar {
+    background: #22c55e;
+    box-shadow: 0 0 14px #22c55e;
+}
+
+.dot.active.camera {
+    background: #38bdf8;
+    box-shadow: 0 0 14px #38bdf8;
+}
+
+.alert-row.big {
+    font-size: 16px;
+    margin-bottom: 14px;
+}
+
+.alert-row .label {
+    font-weight: bold;
+}
+
+.temp-box {
+    margin-top: 10px;
+    background: #020617;
+    border: 2px solid #1e293b;
+    border-radius: 14px;
+    padding: 14px;
+    text-align: center;
+}
+
+.temp-label {
+    font-size: 14px;
+    color: #93c5fd;
+    margin-bottom: 6px;
+}
+
+.temp-value {
+    font-size: 34px;     /* TO */
+    font-weight: bold;
+    color: #facc15;      /* vàng */
+}
+
+
+</style>
+</head>
+
+<body>
+
+<header>
+    <h2>🤖 Robot UI - Giám sát & Điều khiển</h2>
+</header>
+
+<div class="main">
+
+    <!-- LEFT -->
+    <div class="card left-card">
+        <h3>📷 CAMERA</h3>
+        <div class="camera-wrapper">
+			<img id="camera">
+		</div>
+
+
+        <h3>🎮 Điều khiển robot</h3>
+
+		<div class="control-area">
+
+			<!-- DI CHUYỂN -->
+			<div class="move-controls">
+				<div></div>
+				<button onmousedown="press('V0',1)" onmouseup="release('V0',0)"
+						ontouchstart="press('V0',1)" ontouchend="release('V0',0)">⬆</button>
+				<div></div>
+
+				<button onmousedown="press('V0',2)" onmouseup="release('V0',0)"
+						ontouchstart="press('V0',2)" ontouchend="release('V0',0)">⬅</button>
+				<div></div>
+				<button onmousedown="press('V0',3)" onmouseup="release('V0',0)"
+						ontouchstart="press('V0',3)" ontouchend="release('V0',0)">➡</button>
+
+				<div></div>
+				<button onmousedown="press('V0',4)" onmouseup="release('V0',0)"
+						ontouchstart="press('V0',4)" ontouchend="release('V0',0)">⬇</button>
+				<div></div>
+			</div>
+
+			<div class="right-controls">
+				<div class="fork-columns">
+					<!-- CÀNG TRƯỚC -->
+					<div class="forklift">
+						<div class="fork-title">Càng trước</div>
+						<button onmousedown="press('V1',1)" onmouseup="release('V1',0)"
+								ontouchstart="press('V1',1)" ontouchend="release('V1',0)">▲ Nâng</button>
+						<button onmousedown="press('V1',-1)" onmouseup="release('V1',0)"
+								ontouchstart="press('V1',-1)" ontouchend="release('V1',0)">▼ Hạ</button>
+					</div>
+
+					<!-- CÀNG SAU -->
+					<div class="forklift">
+						<div class="fork-title">Càng sau</div>
+						<button onmousedown="press('V2',1)" onmouseup="release('V2',0)"
+								ontouchstart="press('V2',1)" ontouchend="release('V2',0)">▲ Nâng</button>
+						<button onmousedown="press('V2',-1)" onmouseup="release('V2',0)"
+								ontouchstart="press('V2',-1)" ontouchend="release('V2',0)">▼ Hạ</button>
+					</div>
+				</div>
+				
+				<div class="rescue-box">
+					<button class="rescue open"
+						onmousedown="press('V3', 1)"
+						ontouchstart="press('V3', 1)">
+						🚪 Mở ngăn cứu hộ
+					</button>
+
+					<button class="rescue close"
+						onmousedown="press('V3', 0)"
+						ontouchstart="press('V3', 0)">
+						🔒 Đóng ngăn cứu hộ
+					</button>
+				</div>
+			</div>
+		</div>
+
+    </div>
+
+    <!-- RIGHT -->
+    <div class="right">
+
+        <div class="card">
+			<h3>🚨 Cảnh báo</h3>
+
+			<!-- PHÁT HIỆN NGƯỜI -->
+			<div class="alert-row big">
+				<span class="label">Phát hiện người</span>
+				<div class="indicators">
+					<div class="dot radar" id="radarDot"></div>
+					<span>Radar</span>
+
+					<div class="dot camera" id="cameraDot"></div>
+					<span>Camera</span>
+				</div>
+			</div>
+
+			<!-- NHIỆT ĐỘ -->
+			<div class="temp-box">
+				<div class="temp-label">Nhiệt độ</div>
+				<div class="temp-value" id="tempValue">-- °C</div>
+			</div>
+		</div>
+
+
+
+        <!-- BUILDING -->
+        <div class="card">
+            <h3>🏢 Mô phỏng tòa nhà</h3>
+            <table>
+                <tr>
+                    <td class="floor">T5</td>
+                    <td class="room" id="P501">P501</td><td class="room" id="P502">P502</td><td class="room" id="P503">P503</td>
+                    <td class="room" id="P504">P504</td><td class="room" id="P505">P505</td><td class="room" id="P506">P506</td>
+                </tr>
+                <tr>
+                    <td class="floor">T4</td>
+                    <td class="room" id="P401">P401</td><td class="room" id="P402">P402</td><td class="room" id="P403">P403</td>
+                    <td class="room" id="P404">P404</td><td class="room" id="P405">P405</td><td class="room" id="P406">P406</td>
+                </tr>
+                <tr>
+                    <td class="floor">T3</td>
+                    <td class="room" id="P301">P301</td><td class="room" id="P302">P302</td><td class="room" id="P303">P303</td>
+                    <td class="room" id="P304">P304</td><td class="room" id="P305">P305</td><td class="room" id="P306">P306</td>
+                </tr>
+                <tr>
+                    <td class="floor">T2</td>
+                    <td class="room" id="P201">P201</td><td class="room" id="P202">P202</td><td class="room" id="P203">P203</td>
+                    <td class="room" id="P204">P204</td><td class="room" id="P205">P205</td><td class="room" id="P206">P206</td>
+                </tr>
+                <tr>
+                    <td class="floor">T1</td>
+                    <td class="room" id="P101">P101</td><td class="room" id="P102">P102</td><td class="room" id="P103">P103</td>
+                    <td class="room" id="P104">P104</td><td class="room" id="P105">P105</td><td class="room" id="P106">P106</td>
+                </tr>
+            </table>
+        </div>
+
+        <!-- ROOM CONTROL -->
+        <div class="card" id="roomPanel">
+            <h3 id="roomTitle">📍 Phòng</h3>
+            <div class="controls2">
+                <button class="support" onclick="markSupport()">Đánh dấu hỗ trợ</button>
+                <button class="cancel" onclick="unmarkSupport()">Bỏ hỗ trợ</button>
+                <button class="fire" onclick="markFire()">Đánh dấu cháy</button>
+                <button class="cancel" onclick="unmarkFire()">Bỏ cháy</button>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+
+function saveRoomState(room) {
+    const data = {
+        support: room.classList.contains("support"),
+        fire: room.classList.contains("fire")
+    };
+    localStorage.setItem(room.id, JSON.stringify(data));
+}
+
+function loadRoomState(room) {
+    const data = localStorage.getItem(room.id);
+    if (!data) return;
+
+    const state = JSON.parse(data);
+    if (state.support) room.classList.add("support");
+    if (state.fire) room.classList.add("fire");
+}
+
+window.onload = () => {
+    document.querySelectorAll(".room").forEach(room => {
+        loadRoomState(room);
+    });
+};
+
+function markSupport() {
+    if (!selectedRoom) return;
+    selectedRoom.classList.add("support");
+    saveRoomState(selectedRoom);
+}
+
+function unmarkSupport() {
+    if (!selectedRoom) return;
+    selectedRoom.classList.remove("support");
+    saveRoomState(selectedRoom);
+}
+
+function markFire() {
+    if (!selectedRoom) return;
+    selectedRoom.classList.add("fire");
+    saveRoomState(selectedRoom);
+}
+
+function unmarkFire() {
+    if (!selectedRoom) return;
+    selectedRoom.classList.remove("fire");
+    saveRoomState(selectedRoom);
+}
+
+
+
+const BLYNK_TOKEN = "aTmQSd56u-1uYd_pvP2_2Pv7AT8Cmk-7";
+
+///////////////////////////////////////////////////////////////////////////////////////
+let currentStreamUrl = "";
+async function fetchStreamURL() {
+    try {
+        const res = await fetch(
+            `https://blynk.cloud/external/api/get?token=${BLYNK_TOKEN}&V10`
+        );
+        const url = (await res.text()).trim();
+
+        if (!url) return;
+
+        // Nếu URL thay đổi hoặc reload định kỳ
+        currentStreamUrl = url;
+
+        // Cache-busting để tránh treo
+        const camera = document.getElementById("camera");
+        camera.src = url + "?t=" + Date.now();
+
+    } catch (e) {
+        console.error("Fetch stream error:", e);
+    }
+}
+fetchStreamURL();
+/* 10 GIÂY RELOAD STREAM */
+setInterval(fetchStreamURL, 10000);
+///////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////
+let selectedRoom = null;
+
+/* ROOM CLICK */
+document.querySelectorAll(".room").forEach(room => {
+    room.onclick = () => {
+        if (selectedRoom) selectedRoom.classList.remove("selected");
+        selectedRoom = room;
+        room.classList.add("selected");
+        document.getElementById("roomPanel").style.display = "block";
+        document.getElementById("roomTitle").innerText = "📍 " + room.innerText;
+    }
+});
+
+
+async function fetchFireStatus() {
+    try {
+        const v4Res = await fetch(
+            `https://blynk.cloud/external/api/get?token=${BLYNK_TOKEN}&V4`
+        );
+        const v5Res = await fetch(
+            `https://blynk.cloud/external/api/get?token=${BLYNK_TOKEN}&V5`
+        );
+
+        const roomsStr  = await v4Res.text(); // "P101,P102,P103"
+        const statesStr = await v5Res.text(); // "0,1,0"
+
+        if (!roomsStr || !statesStr) return;
+
+        const rooms  = roomsStr.split(",");
+        const states = statesStr.split(",");
+
+        // Xóa trạng thái cũ
+        document.querySelectorAll(".room").forEach(r => {
+            r.classList.remove("fire-blink");
+        });
+
+        // Áp trạng thái mới
+        rooms.forEach((roomId, index) => {
+            if (states[index] === "1") {
+                const roomEl = document.getElementById(roomId.trim());
+                if (roomEl) {
+                    roomEl.classList.add("fire-blink");
+                }
+            }
+        });
+
+    } catch (err) {
+        console.error("Blynk read error:", err);
+    }
+}
+
+/* Poll mỗi 1 giây */
+setInterval(fetchFireStatus, 1000);
+
+
+let lastValue = {};
+
+function press(pin, value) {
+    if (lastValue[pin] === value) return;
+    lastValue[pin] = value;
+    fetch(`https://blynk.cloud/external/api/update?token=${BLYNK_TOKEN}&${pin}=${value}`);
+}
+
+function release(pin, value) {
+    lastValue[pin] = value;
+    fetch(`https://blynk.cloud/external/api/update?token=${BLYNK_TOKEN}&${pin}=${value}`);
+}
+
+
+async function fetchAlertStatus() {
+    try {
+        const [v7, v8, v9] = await Promise.all([
+            fetch(`https://blynk.cloud/external/api/get?token=${BLYNK_TOKEN}&V7`).then(r => r.text()),
+            fetch(`https://blynk.cloud/external/api/get?token=${BLYNK_TOKEN}&V8`).then(r => r.text()),
+            fetch(`https://blynk.cloud/external/api/get?token=${BLYNK_TOKEN}&V9`).then(r => r.text())
+        ]);
+
+        /* NHIỆT ĐỘ */
+        const temp = parseInt(v7);
+        if (!isNaN(temp)) {
+            document.getElementById("tempValue").innerText = temp + " °C";
+        }
+
+        /* RADAR */
+        document.getElementById("radarDot")
+            .classList.toggle("active", v8.trim() === "1");
+
+        /* CAMERA */
+        document.getElementById("cameraDot")
+            .classList.toggle("active", v9.trim() === "1");
+
+    } catch (e) {
+        console.error("Alert fetch error:", e);
+    }
+}
+
+/* Poll mỗi 1 giây */
+setInterval(fetchAlertStatus, 1000);
+
+
+</script>
+
+</body>
+</html>
