@@ -1,1 +1,0 @@
-# bktech1225.github.io
