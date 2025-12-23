@@ -55,7 +55,7 @@ h2 { margin: 0; font-size: 18px; }
 /* camera */
 .camera-wrapper {
     flex: 1;                    /* chỉ chiếm phần còn lại */
-    min-height: 220px;
+    height: 220px;
     max-height: 40vh;           /* KHÓA chiều cao */
     background: black;
     border-radius: 12px;
@@ -87,7 +87,7 @@ h2 { margin: 0; font-size: 18px; }
 .forklift {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 23px;
 	align-items: center;
 }
 
@@ -98,23 +98,23 @@ h2 { margin: 0; font-size: 18px; }
 }
 /* NÚT DI CHUYỂN - TO */
 .move-controls button {
-    padding: 32px;
-    font-size: 26px;
+    padding: 50px;
+    font-size: 36px;
     border-radius: 18px;
 }
 
 /* NÚT NÂNG / HẠ - NHỎ */
 .forklift button {
 	width: 180px;
-	height: 48px;
-    padding: 10px;
-    font-size: 16px;
+	height: 70px;
+    padding: 20px;
+    font-size: 18px;
     border-radius: 12px;
 }
 .fork-columns {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 14px;
+    gap: 16px;
 }
 
 /* ===== CONTROL ===== */
@@ -288,48 +288,6 @@ td:hover { background: #020617; }
     font-size: 34px;     /* TO */
     font-weight: bold;
     color: #facc15;      /* vàng */
-}
-/* ================= MOBILE LANDSCAPE FIX ================= */
-@media screen and (max-width: 900px) and (orientation: landscape) {
-
-    header {
-        padding: 6px 12px;
-    }
-
-    header h2 {
-        font-size: 14px;
-    }
-
-    .main {
-        grid-template-columns: 1fr;   /* 👈 CHUYỂN 1 CỘT */
-        padding: 8px;
-        gap: 10px;
-    }
-
-    .left-card {
-        height: auto;                 /* 👈 BỎ FIXED HEIGHT */
-    }
-
-    .camera-wrapper {
-        height: 45vh;                 /* 👈 CAMERA LUÔN THẤY */
-        max-height: none;
-        margin-bottom: 8px;
-    }
-
-    .move-controls button {
-        padding: 24px;
-        font-size: 22px;
-    }
-
-    .forklift button {
-        width: 160px;
-        height: 42px;
-        font-size: 14px;
-    }
-
-    .right {
-        order: 2;                     /* cảnh báo xuống dưới */
-    }
 }
 
 
