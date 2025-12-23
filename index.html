@@ -55,8 +55,8 @@ h2 { margin: 0; font-size: 18px; }
 /* camera */
 .camera-wrapper {
     flex: 1;                    /* chỉ chiếm phần còn lại */
-    min-height: 220px;
-    max-height: 65vh;           /* KHÓA chiều cao */
+    height: 220px;
+    max-height: 40vh;           /* KHÓA chiều cao */
     background: black;
     border-radius: 12px;
     overflow: hidden;
@@ -98,18 +98,18 @@ h2 { margin: 0; font-size: 18px; }
 }
 /* NÚT DI CHUYỂN - TO */
 .move-controls button {
-    padding: 26px;
-    font-size: 22px;
-    border-radius: 16px;
+    padding: 32px;
+    font-size: 26px;
+    border-radius: 18px;
 }
 
 /* NÚT NÂNG / HẠ - NHỎ */
 .forklift button {
-	width: 160px;
-	height: 40px;
+	width: 180px;
+	height: 48px;
     padding: 10px;
-    font-size: 14px;
-    border-radius: 10px;
+    font-size: 16px;
+    border-radius: 12px;
 }
 .fork-columns {
     display: grid;
@@ -367,6 +367,21 @@ td:hover { background: #020617; }
 						🔒 Đóng ngăn cứu hộ
 					</button>
 				</div>
+				
+				<div class="rescue-box">
+					<button class="rescue open"
+						onmousedown="press('V11', 1)"
+						ontouchstart="press('V11', 1)">
+						🔊 Bật loa thông báo
+					</button>
+
+					<button class="rescue close"
+						onmousedown="press('V11', 0)"
+						ontouchstart="press('V11', 0)">
+						🔇 Tắt loa thông báo
+					</button>
+				</div>
+
 			</div>
 		</div>
 
