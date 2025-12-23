@@ -50,14 +50,14 @@ h2 { margin: 0; font-size: 18px; }
 .left-card {
     display: flex;
     flex-direction: column;
-    height: calc(100vh - 140px); /* trừ header + padding */
+    height: calc(60vh - 140px); /* trừ header + padding */
 }
 
 /* camera */
 .camera-wrapper {
     flex: 1;                    /* chỉ chiếm phần còn lại */
     min-height: 220px;
-    max-height: 40vh;           /* KHÓA chiều cao */
+    max-height: 35vh;           /* KHÓA chiều cao */
     background: black;
     border-radius: 12px;
     overflow: hidden;
@@ -99,10 +99,13 @@ h2 { margin: 0; font-size: 18px; }
 }
 /* NÚT DI CHUYỂN - TO */
 .move-controls button {
-    padding: 50px;
+    height: 80px;           /* chiều cao cố định */
+    width: 100%;
     font-size: 36px;
     border-radius: 18px;
+    padding: 0;
 }
+
 
 /* NÚT NÂNG / HẠ - NHỎ */
 .forklift button {
