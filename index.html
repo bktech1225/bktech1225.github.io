@@ -55,7 +55,7 @@ h2 { margin: 0; font-size: 18px; }
 /* camera */
 .camera-wrapper {
     flex: 1;                    /* chỉ chiếm phần còn lại */
-    height: 220px;
+    min-height: 220px;
     max-height: 40vh;           /* KHÓA chiều cao */
     background: black;
     border-radius: 12px;
@@ -290,6 +290,49 @@ td:hover { background: #020617; }
     color: #facc15;      /* vàng */
 }
 
+
+/* ================= MOBILE LANDSCAPE FIX ================= */
+@media screen and (max-width: 900px) and (orientation: landscape) {
+
+    header {
+        padding: 6px 12px;
+    }
+
+    header h2 {
+        font-size: 14px;
+    }
+
+    .main {
+        grid-template-columns: 1fr;   /* 👈 CHUYỂN 1 CỘT */
+        padding: 8px;
+        gap: 10px;
+    }
+
+    .left-card {
+        height: auto;                 /* 👈 BỎ FIXED HEIGHT */
+    }
+
+    .camera-wrapper {
+        height: 45vh;                 /* 👈 CAMERA LUÔN THẤY */
+        max-height: none;
+        margin-bottom: 8px;
+    }
+
+    .move-controls button {
+        padding: 24px;
+        font-size: 22px;
+    }
+
+    .forklift button {
+        width: 160px;
+        height: 42px;
+        font-size: 14px;
+    }
+
+    .right {
+        order: 2;                     /* cảnh báo xuống dưới */
+    }
+}
 
 </style>
 </head>
