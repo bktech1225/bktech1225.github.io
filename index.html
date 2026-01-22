@@ -333,6 +333,13 @@ td:hover { background: #020617; }
     .right {
         order: 2;                     /* cảnh báo xuống dưới */
     }
+	.rescue.fire {
+		background: #dc2626;
+		width: 380px;
+		height: 60px;
+		font-size: 16px;
+	}
+
 }
 
 </style>
@@ -400,14 +407,14 @@ td:hover { background: #020617; }
 				
 				<div class="rescue-box">
 					<button class="rescue open"
-						onmousedown="press('V3', 1)"
-						ontouchstart="press('V3', 1)">
+						onmousedown="press('V16', 85)"
+						ontouchstart="press('V16', 85)">
 						🚪 Mở ngăn cứu hộ
 					</button>
 
 					<button class="rescue close"
-						onmousedown="press('V3', 0)"
-						ontouchstart="press('V3', 0)">
+						onmousedown="press('V16', 0)"
+						ontouchstart="press('V16', 0)">
 						🔒 Đóng ngăn cứu hộ
 					</button>
 				</div>
@@ -423,6 +430,46 @@ td:hover { background: #020617; }
 						onmousedown="press('V11', 0)"
 						ontouchstart="press('V11', 0)">
 						🔇 Tắt loa thông báo
+					</button>
+				</div>
+				<!-- GÓC BẮN -->
+				<div class="rescue-box">
+					<button class="rescue open"
+						onmousedown="adjustAngle(-1)"
+						ontouchstart="adjustAngle(-1)">
+						▼ Góc Bắn -
+					</button>
+
+					<button class="rescue close"
+						onmousedown="adjustAngle(1)"
+						ontouchstart="adjustAngle(1)">
+						▲ Góc Bắn +
+					</button>
+				</div>
+
+				<!-- BÌNH OXI -->
+				<div class="rescue-box">
+					<button class="rescue open"
+						onmousedown="press('V14', 1)"
+						ontouchstart="press('V14', 1)">
+						▲ Nâng Bình OXI
+					</button>
+
+					<button class="rescue close"
+						onmousedown="press('V14', 0)"
+						ontouchstart="press('V14', 0)">
+						▼ Hạ Bình OXI
+					</button>
+				</div>
+
+				<!-- BẮN BÓNG CHỮA CHÁY -->
+				<div class="rescue-box">
+					<button class="rescue fire"
+						onmousedown="press('V15', 1)"
+						onmouseup="press('V15', 0)"
+						ontouchstart="press('V15', 1)"
+						ontouchend="press('V15', 0)">
+						Bắn bóng chữa cháy
 					</button>
 				</div>
 
@@ -465,27 +512,27 @@ td:hover { background: #020617; }
                 <tr>
                     <td class="floor">T5</td>
                     <td class="room" id="P501">P501</td><td class="room" id="P502">P502</td><td class="room" id="P503">P503</td>
-                    <td class="room" id="P504">P504</td><td class="room" id="P505">P505</td><td class="room" id="P506">P506</td>
+                    <td class="room" id="P504">P504</td><td class="room" id="P505">P505</td><td class="room" id="P506">Lối thoát hiểm T5</td>
                 </tr>
                 <tr>
                     <td class="floor">T4</td>
                     <td class="room" id="P401">P401</td><td class="room" id="P402">P402</td><td class="room" id="P403">P403</td>
-                    <td class="room" id="P404">P404</td><td class="room" id="P405">P405</td><td class="room" id="P406">P406</td>
+                    <td class="room" id="P404">P404</td><td class="room" id="P405">P405</td><td class="room" id="P406">Lối thoát hiểm T4</td>
                 </tr>
                 <tr>
                     <td class="floor">T3</td>
                     <td class="room" id="P301">P301</td><td class="room" id="P302">P302</td><td class="room" id="P303">P303</td>
-                    <td class="room" id="P304">P304</td><td class="room" id="P305">P305</td><td class="room" id="P306">P306</td>
+                    <td class="room" id="P304">P304</td><td class="room" id="P305">P305</td><td class="room" id="P306">Lối thoát hiểm T3</td>
                 </tr>
                 <tr>
                     <td class="floor">T2</td>
                     <td class="room" id="P201">P201</td><td class="room" id="P202">P202</td><td class="room" id="P203">P203</td>
-                    <td class="room" id="P204">P204</td><td class="room" id="P205">P205</td><td class="room" id="P206">P206</td>
+                    <td class="room" id="P204">P204</td><td class="room" id="P205">P205</td><td class="room" id="P206">Lối thoát hiểm T2</td>
                 </tr>
                 <tr>
                     <td class="floor">T1</td>
                     <td class="room" id="P101">P101</td><td class="room" id="P102">P102</td><td class="room" id="P103">P103</td>
-                    <td class="room" id="P104">P104</td><td class="room" id="P105">P105</td><td class="room" id="P106">P106</td>
+                    <td class="room" id="P104">P104</td><td class="room" id="P105">P105</td><td class="room" id="P106">Lối thoát hiểm T1</td>
                 </tr>
             </table>
         </div>
@@ -683,6 +730,19 @@ async function fetchAlertStatus() {
 /* Poll mỗi 1 giây */
 setInterval(fetchAlertStatus, 1000);
 
+/* ================= GÓC BẮN ================= */
+let currentAngle = 0;     // 0 – 100 độ
+const ANGLE_STEP = 5;
+
+function adjustAngle(delta) {
+    currentAngle += delta;
+
+    if (currentAngle < 0) currentAngle = 0;
+    if (currentAngle > 100) currentAngle = 100;
+
+    fetch(`https://blynk.cloud/external/api/update?token=${BLYNK_TOKEN}&V16=${currentAngle}`);
+    console.log("Góc bắn:", currentAngle);
+}
 
 </script>
 
