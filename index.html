@@ -28,9 +28,10 @@ h2 { margin: 0; font-size: 18px; }
 /* ===== LAYOUT ===== */
 .main {
     padding: 16px;
-    display: flex;
-    flex-direction: column;  
+    display: grid;
+    grid-template-columns: 2fr 1fr;  /* trái to, phải nhỏ */
     gap: 16px;
+    height: calc(100vh - 60px);
 }
 
 
@@ -50,20 +51,20 @@ h2 { margin: 0; font-size: 18px; }
 .left-card {
     display: flex;
     flex-direction: column;
-    height: calc(60vh - 140px); /* trừ header + padding */
+    height: 100%;
 }
 
-/* camera */
 .camera-wrapper {
-    flex: 1;                    /* chỉ chiếm phần còn lại */
-    min-height: 220px;
-    max-height: 35vh;           /* KHÓA chiều cao */
+    flex: 1;
+    min-height: 350px;
+    max-height: 50vh;
     background: black;
     border-radius: 12px;
     overflow: hidden;
     border: 2px solid #1e293b;
     margin-bottom: 12px;
 }
+
 
 /* ảnh/video */
 #camera {
@@ -72,12 +73,53 @@ h2 { margin: 0; font-size: 18px; }
     object-fit: contain; /* giữ tỉ lệ */
 }
 
+.camera-wrapper {
+    position: relative;
+}
+
+/* hồng tâm */
+#crosshair {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 40px;
+    height: 40px;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+}
+
+#crosshair::before,
+#crosshair::after {
+    content: "";
+    position: absolute;
+    background: red;
+}
+
+#crosshair::before {
+    width: 2px;
+    height: 40px;
+    left: 50%;
+    top: 0;
+    transform: translateX(-50%);
+}
+
+#crosshair::after {
+    height: 2px;
+    width: 40px;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+
+
+
 .control-area {
     display: grid;
-    grid-template-columns: 1.2fr 0.8fr 0.8fr;
+    grid-template-columns: 1.2fr 1fr 1fr;
     gap: 12px;
-    margin-top: 10px;
 }
+
 
 .move-controls {
     display: grid;
@@ -100,22 +142,17 @@ h2 { margin: 0; font-size: 18px; }
 /* NÚT DI CHUYỂN - TO */
 .move-controls button {
     padding: 50px;
-    font-size: 36px;
+    font-size: 30px;
     border-radius: 18px;
 }
 
 /* NÚT NÂNG / HẠ - NHỎ */
 .forklift button {
 	width: 180px;
-	height: 70px;
-    padding: 20px;
+	height: 60px;
+    padding: 10px;
     font-size: 18px;
     border-radius: 12px;
-}
-.fork-columns {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 16px;
 }
 
 /* ===== CONTROL ===== */
@@ -126,7 +163,7 @@ h2 { margin: 0; font-size: 18px; }
 }
 
 button {
-    padding: 22px;
+    padding: 15px;
     font-size: 18px;
     font-weight: bold;
     background: #1d4ed8;
@@ -204,7 +241,7 @@ td:hover { background: #020617; }
 }
 
 .rescue-box {
-    margin-top: 10px;
+    margin-top: 5px;
     display: flex;
     gap: 10px;
     justify-content: center;
@@ -213,7 +250,7 @@ td:hover { background: #020617; }
 .rescue {
     width: 180px;
 	height: 50px;
-    padding: 10px;
+    padding: 5px;
     font-size: 14px;
     border-radius: 10px;
     border: none;
@@ -291,6 +328,27 @@ td:hover { background: #020617; }
     color: #facc15;      /* vàng */
 }
 
+.robot-icon {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+}
+.robot-icon img {
+    width: 60px;
+    height: 60px;
+    object-fit: contain;
+}
+
+td.room {
+    height: 70px;
+}
+
+.room.robot-here {
+    background: #2563eb;
+}
+
+
 
 /* ================= MOBILE LANDSCAPE FIX ================= */
 @media screen and (max-width: 900px) and (orientation: landscape) {
@@ -358,7 +416,9 @@ td:hover { background: #020617; }
         <h3>📷 CAMERA</h3>
         <div class="camera-wrapper">
 			<img id="camera">
+			<div id="crosshair"></div>
 		</div>
+
 
 
         <h3>🎮 Điều khiển robot</h3>
@@ -384,96 +444,58 @@ td:hover { background: #020617; }
 				<div></div>
 			</div>
 
+			<!-- CỘT 2: CÀNG NÂNG HẠ -->
 			<div class="right-controls">
-				<div class="fork-columns">
-					<!-- CÀNG TRƯỚC -->
-					<div class="forklift">
-						<div class="fork-title">Càng trước</div>
-						<button onmousedown="press('V1',1)" onmouseup="release('V1',0)"
-								ontouchstart="press('V1',1)" ontouchend="release('V1',0)">▲ Nâng</button>
-						<button onmousedown="press('V1',-1)" onmouseup="release('V1',0)"
-								ontouchstart="press('V1',-1)" ontouchend="release('V1',0)">▼ Hạ</button>
-					</div>
 
-					<!-- CÀNG SAU -->
-					<div class="forklift">
-						<div class="fork-title">Càng sau</div>
-						<button onmousedown="press('V2',1)" onmouseup="release('V2',0)"
-								ontouchstart="press('V2',1)" ontouchend="release('V2',0)">▲ Nâng</button>
-						<button onmousedown="press('V2',-1)" onmouseup="release('V2',0)"
-								ontouchstart="press('V2',-1)" ontouchend="release('V2',0)">▼ Hạ</button>
-					</div>
-				</div>
-				
-				<div class="rescue-box">
-					<button class="rescue open"
-						onmousedown="press('V16', 85)"
-						ontouchstart="press('V16', 85)">
-						🚪 Mở ngăn cứu hộ
-					</button>
-
-					<button class="rescue close"
-						onmousedown="press('V16', 0)"
-						ontouchstart="press('V16', 0)">
-						🔒 Đóng ngăn cứu hộ
-					</button>
-				</div>
-				
-				<div class="rescue-box">
-					<button class="rescue open"
-						onmousedown="press('V11', 1)"
-						ontouchstart="press('V11', 1)">
-						🔊 Bật loa thông báo
-					</button>
-
-					<button class="rescue close"
-						onmousedown="press('V11', 0)"
-						ontouchstart="press('V11', 0)">
-						🔇 Tắt loa thông báo
-					</button>
-				</div>
-				<!-- GÓC BẮN -->
-				<div class="rescue-box">
-					<button class="rescue open"
-						onmousedown="adjustAngle(-1)"
-						ontouchstart="adjustAngle(-1)">
-						▼ Góc Bắn -
-					</button>
-
-					<button class="rescue close"
-						onmousedown="adjustAngle(1)"
-						ontouchstart="adjustAngle(1)">
-						▲ Góc Bắn +
-					</button>
+				<div class="forklift">
+					<div class="fork-title">Càng trước</div>
+					<button onmousedown="press('V1',1)" onmouseup="release('V1',0)"
+							ontouchstart="press('V1',1)" ontouchend="release('V1',0)">▲ Nâng</button>
+					<button onmousedown="press('V1',-1)" onmouseup="release('V1',0)"
+							ontouchstart="press('V1',-1)" ontouchend="release('V1',0)">▼ Hạ</button>
 				</div>
 
-				<!-- BÌNH OXI -->
-				<div class="rescue-box">
-					<button class="rescue open"
-						onmousedown="press('V14', 1)"
-						ontouchstart="press('V14', 1)">
-						▲ Nâng Bình OXI
-					</button>
-
-					<button class="rescue close"
-						onmousedown="press('V14', 0)"
-						ontouchstart="press('V14', 0)">
-						▼ Hạ Bình OXI
-					</button>
-				</div>
-
-				<!-- BẮN BÓNG CHỮA CHÁY -->
-				<div class="rescue-box">
-					<button class="rescue fire"
-						onmousedown="press('V15', 1)"
-						onmouseup="press('V15', 0)"
-						ontouchstart="press('V15', 1)"
-						ontouchend="press('V15', 0)">
-						Bắn bóng chữa cháy
-					</button>
+				<div class="forklift">
+					<div class="fork-title">Càng sau</div>
+					<button onmousedown="press('V2',1)" onmouseup="release('V2',0)"
+							ontouchstart="press('V2',1)" ontouchend="release('V2',0)">▲ Nâng</button>
+					<button onmousedown="press('V2',-1)" onmouseup="release('V2',0)"
+							ontouchstart="press('V2',-1)" ontouchend="release('V2',0)">▼ Hạ</button>
 				</div>
 
 			</div>
+
+			<!-- CỘT 3: ĐIỀU KHIỂN KHÁC -->
+			<div class="right-controls">
+
+				<div class="rescue-box">
+					<button class="rescue open" onmousedown="press('V16',85)">🚪 Mở ngăn cứu hộ</button>
+					<button class="rescue close" onmousedown="press('V16',0)">🔒 Đóng ngăn cứu hộ</button>
+				</div>
+
+				<div class="rescue-box">
+					<button class="rescue open" onmousedown="press('V11',1)">🔊 Bật loa</button>
+					<button class="rescue close" onmousedown="press('V11',0)">🔇 Tắt loa</button>
+				</div>
+
+				<div class="rescue-box">
+					<button class="rescue open" onmousedown="press('V14',0)">▼ Hạ bình OXI</button>
+					<button class="rescue close" onmousedown="press('V14',1)">▲ Nâng bình OXI</button>
+				</div>
+
+				<div class="rescue-box" style="flex-direction:column;align-items:center;">
+					<button class="rescue fire"
+						onmousedown="press('V15',1)"
+						onmouseup="press('V15',0)">
+						🔥 Bắn bóng chữa cháy
+					</button>
+					<div id="angleDisplay" style="margin-top:6px;font-size:18px;color:#facc15;">
+						🎯 Góc bắn: --°
+					</div>
+				</div>
+
+			</div>
+
 		</div>
 
     </div>
@@ -501,8 +523,8 @@ td:hover { background: #020617; }
 				<div class="temp-label">Nhiệt độ</div>
 				<div class="temp-value" id="tempValue">-- °C</div>
 			</div>
-		</div>
 
+		</div>
 
 
         <!-- BUILDING -->
@@ -730,19 +752,126 @@ async function fetchAlertStatus() {
 /* Poll mỗi 1 giây */
 setInterval(fetchAlertStatus, 1000);
 
-/* ================= GÓC BẮN ================= */
-let currentAngle = 0;     // 0 – 100 độ
-const ANGLE_STEP = 5;
 
-function adjustAngle(delta) {
-    currentAngle += delta;
+async function fetchAngleFromRobot() {
+    try {
+        const v13 = await fetch(
+            `https://blynk.cloud/external/api/get?token=${BLYNK_TOKEN}&V13`
+        ).then(r => r.text());
 
-    if (currentAngle < 0) currentAngle = 0;
-    if (currentAngle > 100) currentAngle = 100;
+        const angle = parseInt(v13);
+        if (isNaN(angle)) return;
 
-    fetch(`https://blynk.cloud/external/api/update?token=${BLYNK_TOKEN}&V16=${currentAngle}`);
-    console.log("Góc bắn:", currentAngle);
+        // Hiển thị số
+        document.getElementById("angleDisplay").innerText =
+            "🎯 Góc bắn: " + angle + "°";
+
+        // Điều khiển hồng tâm
+        const crosshair = document.getElementById("crosshair");
+        const cameraWrapper = document.querySelector(".camera-wrapper");
+
+        const h = cameraWrapper.clientHeight;
+
+        // map 0–100 => từ center tới top
+        const y = (h / 2) - (angle / 100) * (h / 2);
+
+        crosshair.style.top = y + "px";
+
+    } catch (e) {
+        console.error("Angle fetch error:", e);
+    }
 }
+
+/* poll mỗi 500ms */
+setInterval(fetchAngleFromRobot, 500);
+
+let roomOriginalText = {};
+document.querySelectorAll(".room").forEach(r=>{
+    roomOriginalText[r.id] = r.innerText;
+});
+
+
+async function fetchRobotRoom() {
+    try {
+        const distStr = await fetch(
+            `https://blynk.cloud/external/api/get?token=${BLYNK_TOKEN}&V16`
+        ).then(r => r.text());
+
+        const roomStr = await fetch(
+            `https://blynk.cloud/external/api/get?token=${BLYNK_TOKEN}&V4`
+        ).then(r => r.text());
+
+        if (!distStr || !roomStr) return;
+
+        // Parse
+        const distances = distStr.split(",").map(Number);   // vd: [1.2,0.5,2.0]
+        const rooms = roomStr.split(",");                   // vd: ["P301","P305","P302"]
+
+        if (distances.length < 3 || rooms.length < 3) return;
+
+        // Nếu cả 3 = 0 -> không có vị trí robot
+        if (distances.every(d => d === 0)) {
+            removeRobotIcon();
+            return;
+        }
+
+        // tìm index nhỏ nhất >0
+        let minIndex = -1;
+        let minValue = Infinity;
+
+        distances.forEach((d, i) => {
+            if (d > 0 && d < minValue) {
+                minValue = d;
+                minIndex = i;
+            }
+        });
+
+        if (minIndex === -1) return;
+
+        const roomId = rooms[minIndex].trim();
+
+        showRobotAtRoom(roomId);
+
+    } catch (e) {
+        console.error("Robot room error:", e);
+    }
+}
+
+function removeRobotIcon() {
+    document.querySelectorAll(".room").forEach(r => {
+        if (r.querySelector(".robot-icon")) {
+            r.innerText = roomOriginalText[r.id];
+            r.classList.remove("robot-here");
+        }
+    });
+}
+
+
+function showRobotAtRoom(roomId) {
+    removeRobotIcon();
+
+    const roomEl = document.getElementById(roomId);
+    if (!roomEl) return;
+
+    // lưu text gốc nếu chưa có
+    if (!roomOriginalText[roomId]) {
+        roomOriginalText[roomId] = roomEl.innerText;
+    }
+
+	roomEl.innerHTML = `
+		<div class="robot-icon">
+			<img src="icon.png" alt="robot">
+		</div>
+	`;
+	roomEl.classList.add("robot-here");
+
+}
+
+
+// poll mỗi 1s
+setInterval(fetchRobotRoom, 1000);
+
+
 
 </script>
 
